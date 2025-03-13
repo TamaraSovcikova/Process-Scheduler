@@ -28,7 +28,16 @@ public class TaskOne {
     }
     // To be completed
     public void executeCommands(String inputString) {
+    	splitCommands(inputString);
 
+    }
+    
+    // Method that split input on "|", removing spaces around it
+    public void splitCommands(String commandString) {    	
+    	String[] pipeCommands = commandString.trim().split("\\s*\\|\\s*"); 
+    	for (String cmd : pipeCommands) {
+    	    String[] commandParts = cmd.split("\\s+"); // Split command by spaces
+    	}
     }
 
     // more methods can be added 
