@@ -1,6 +1,8 @@
 package task1;
 
 import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class TaskOne {
     
@@ -29,26 +31,32 @@ public class TaskOne {
     // To be completed
     public void executeCommands(String inputString) {
     	String[][] commands = splitCommands(inputString);
+    	
+    	List<String> currentOutput = new ArrayList<>(); // Used for storing intermediate results
 
         for (String[] commandParts : commands) {
             if (commandParts.length == 0) continue; // Skips any empty commands
 
             switch (commandParts[0]) {
-                case "cat":
-                    handleCat(commandParts);
-                    break;
-                case "wc":
-                    handleWc(commandParts);
-                    break;
-                case "sort":
-                    handleSort(commandParts);
-                    break;
-                case "uniq":
-                    handleUniq(commandParts);
-                    break;
-                default:
-                    System.out.println("Error: Invalid command " + commandParts[0]);
-            }
+            case "cat":
+                currentOutput = handleCat(commandParts); // Capture output here
+                break;
+            case "wc":
+                currentOutput = handleWc(commandParts, currentOutput);
+                break;
+            case "sort":
+                currentOutput = handleSort(commandParts, currentOutput);
+                break;
+            case "uniq":
+                currentOutput = handleUniq(commandParts, currentOutput);
+                break;
+            default:
+                System.out.println("Error: Invalid command " + commandParts[0]);
+        }
+        }
+        //Prints the output
+        for (String line : currentOutput) {
+            System.out.println(line);
         }
 
     }
@@ -64,10 +72,45 @@ public class TaskOne {
         return commands;
     }
     
-    public void handleCat(String[] commandParts) {}
-    public void handleWc(String[] commandParts) {}
-    public void handleSort(String[] commandParts) {}
-    public void handleUniq(String[] commandParts) {}
+    public List<String> handleCat(String[] commandParts) {
+    	if (commandParts.length < 2) {
+            System.out.println("Missing filename for cat");
+            return Collections.emptyList();
+        }
+    	
+    	String filename = commandParts[1];
+    	List<String> lines = new ArrayList<>();
+    	
+    	try (Scanner scannedFile = new Scanner(new File(filename))) {
+            while (scannedFile.hasNextLine()) {
+            	// Is adding each line to the list
+                lines.add(scannedFile.nextLine()); 
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: File not found - " + filename);
+            return Collections.emptyList();
+        }
+
+        return lines;
+    }
+
+    public List<String> handleWc(String[] commandParts, List<String> input) {
+        // 1. Will count lines in input List<String>
+        // 2. Return a new List<String> with the count as a single element
+        return new ArrayList<>(); 
+    }
+
+    public List<String> handleSort(String[] commandParts, List<String> input) {
+        // 1. Will sort the List<String>
+        // 2. Return sorted list
+        return new ArrayList<>(); 
+    }
+
+    public List<String> handleUniq(String[] commandParts, List<String> input) {
+        // 1. Will remove consecutive duplicate lines
+        // 2. Return modified list
+        return new ArrayList<>(); 
+    }
 
 
     // more methods can be added 
