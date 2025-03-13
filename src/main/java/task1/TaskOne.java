@@ -1,7 +1,7 @@
 package task1;
 
 import java.util.*;
-
+//original version
 public class TaskOne {
     
     // store all the output in this ArrayList for testing purposes
