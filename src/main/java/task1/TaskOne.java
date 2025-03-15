@@ -77,21 +77,27 @@ public class TaskOne {
             System.out.println("Missing filename for cat");
             return Collections.emptyList();
         }
-    	
-    	String filename = commandParts[1];
-    	List<String> lines = new ArrayList<>();
-    	
-    	try (Scanner scannedFile = new Scanner(new File(filename))) {
-            while (scannedFile.hasNextLine()) {
-            	// Is adding each line to the list
-                lines.add(scannedFile.nextLine()); 
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: File not found - " + filename);
+
+        File file = new File(commandParts[1]);
+
+        // Checking if the file is a directory 
+        if (file.isDirectory()) {
+            System.out.println("Error: " + file.getName() + " is a directory");
             return Collections.emptyList();
         }
 
+        List<String> lines = new ArrayList<>();
+        
+        try (Scanner scannedFile = new Scanner(file)) {
+            while (scannedFile.hasNextLine()) {
+                lines.add(scannedFile.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Invalid file " + file.getName());
+        }
+        
         return lines;
+
     }
 
     public List<String> handleWc(String[] commandParts, List<String> input) {
