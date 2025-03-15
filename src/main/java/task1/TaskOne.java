@@ -77,34 +77,55 @@ public class TaskOne {
             System.out.println("Missing filename for cat");
             return Collections.emptyList();
         }
-
-        File file = new File(commandParts[1]);
-
-        // Checking if the file is a directory 
-        if (file.isDirectory()) {
-            System.out.println("Error: " + file.getName() + " is a directory");
-            return Collections.emptyList();
-        }
-
-        List<String> lines = new ArrayList<>();
         
-        try (Scanner scannedFile = new Scanner(file)) {
-            while (scannedFile.hasNextLine()) {
-                lines.add(scannedFile.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Invalid file " + file.getName());
-        }
-        
-        return lines;
-
+        return readFile(commandParts[1]);
     }
 
     public List<String> handleWc(String[] commandParts, List<String> input) {
-        // 1. Will count lines in input List<String>
-        // 2. Return a new List<String> with the count as a single element
-        return new ArrayList<>(); 
+        boolean countLinesOnly = false;
+        String filename = null;
+
+        // Process command arguments to differentiate between -l and filename
+        for (String part : commandParts) {
+            if (part.equals("-l")) {
+                countLinesOnly = true;
+            } else if (!part.equals("wc")) {
+                filename = part;
+            }
+        }
+
+        List<String> content;
+
+        // If input is provided (via piping), use that
+        if (!input.isEmpty()) {
+            content = input;
+        } 
+        // Otherwise, read from file
+        else {
+            if (filename == null) {
+                throw new IllegalArgumentException("Error: Missing filename for wc");
+            }
+            content = readFile(filename);
+        }
+
+        int lineCount = content.size();
+
+        // If "-l" is present, return the line count only
+        if (countLinesOnly) {
+            return Collections.singletonList(String.valueOf(lineCount));
+        }
+
+        int wordCount = 0;
+        int byteCount = 0;
+
+        for (String line : content) {
+            wordCount += line.isEmpty() ? 0 : line.split("\\s+").length; //this ensures that empty lines don't count as words
+            byteCount += line.getBytes().length;
+        }
+
+        return Collections.singletonList(lineCount + " " + wordCount + " " + byteCount);
     }
+
 
     public List<String> handleSort(String[] commandParts, List<String> input) {
         // 1. Will sort the List<String>
@@ -117,10 +138,29 @@ public class TaskOne {
         // 2. Return modified list
         return new ArrayList<>(); 
     }
+    
+    private List<String> readFile(String filename) {
+        File file = new File(filename);
+        
+        if (file.isDirectory()) {
+            throw new IllegalArgumentException(file.getName() + " is a directory");
+        }
 
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException("Invalid file " + file.getName());
+        }       
 
-    // more methods can be added 
+        List<String> lines = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                lines.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Invalid file " + file.getName());
+        }
 
+        return lines;
+    }
     
     public List<String> getCommandOutput() {
         return new ArrayList<>(bufferOutput);
