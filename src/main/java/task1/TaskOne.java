@@ -35,11 +35,11 @@ public class TaskOne {
     	List<String> currentOutput = new ArrayList<>(); // Used for storing intermediate results
 
         for (String[] commandParts : commands) {
-            if (commandParts.length == 0) continue; // Skips any empty commands
+        	 if (commandParts.length == 0 || commandParts[0].isEmpty()) continue; // Skips empty commands and presses of just Enter
 
             switch (commandParts[0]) {
             case "cat":
-                currentOutput = handleCat(commandParts); // Capture output here
+                currentOutput = handleCat(commandParts);
                 break;
             case "wc":
                 currentOutput = handleWc(commandParts, currentOutput);
@@ -103,7 +103,8 @@ public class TaskOne {
         // Otherwise, read from file
         else {
             if (filename == null) {
-                throw new IllegalArgumentException("Error: Missing filename for wc");
+                //Ensuring that it correctly handles empty files
+            	return Collections.singletonList("0 0 0");
             }
             content = readFile(filename);
         }
@@ -121,7 +122,8 @@ public class TaskOne {
         for (String line : content) {
             wordCount += line.isEmpty() ? 0 : line.split("\\s+").length; //this ensures that empty lines don't count as words
             byteCount += line.getBytes().length;
-        }
+        }         
+        
 
         return Collections.singletonList(lineCount + " " + wordCount + " " + byteCount);
     }
@@ -158,7 +160,7 @@ public class TaskOne {
         // Otherwise, read from file
         else {
             if (commandParts.length < 2) {
-                throw new IllegalArgumentException("Missing filename for uniq");
+            	return Collections.emptyList();
             }
             content = readFile(commandParts[1]);
         }
