@@ -51,14 +51,12 @@ public class TaskOne {
                 currentOutput = handleUniq(commandParts, currentOutput);
                 break;
             default:
-                System.out.println("Error: Invalid command " + commandParts[0]);
+            	throw new IllegalArgumentException("Invalid command " + commandParts[0]);
         }
         }
-        //Prints the output
-        for (String line : currentOutput) {
-            System.out.println(line);
-        }
-
+        
+        bufferOutput.clear();
+        bufferOutput.addAll(currentOutput);
     }
     
     // Method that split input on "|", removing spaces around it
@@ -74,11 +72,13 @@ public class TaskOne {
     
     public List<String> handleCat(String[] commandParts) {
     	if (commandParts.length < 2) {
-            System.out.println("Missing filename for cat");
             return Collections.emptyList();
         }
         
-        return readFile(commandParts[1]);
+        List<String> content = readFile(commandParts[1]);
+
+        // This ensures it returns at least an empty string if the file is empty
+        return content.isEmpty() ? Collections.singletonList("") : content;
     }
 
     public List<String> handleWc(String[] commandParts, List<String> input) {
@@ -200,7 +200,8 @@ public class TaskOne {
             throw new IllegalArgumentException("Invalid file " + file.getName());
         }
 
-        return lines;
+        // Returns at least an empty string for empty files
+        return lines.isEmpty() ? Collections.singletonList("") : lines;
     }
     
     public List<String> getCommandOutput() {
