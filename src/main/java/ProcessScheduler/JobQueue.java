@@ -28,7 +28,6 @@ public class JobQueue {
 	 * @throws FileNotFoundException
 	 */
 	public void readFile(String filePath) throws FileNotFoundException {
-		// TODO
 		// Read the file...
 		// Check if the file exists
 		// Reads the InputScript file
@@ -63,7 +62,10 @@ public class JobQueue {
 	 */
 	public void addToQueue(String PID, int priority, String processPathFile) {
 		// get the process CPU burst's time, then add to the queue
-		// TODO
+		
+		long burst = generateBurst(processPathFile);
+		ProcessControlBlock pcb = new ProcessControlBlock(PID, priority, burst, processPathFile);
+		queue.add(pcb);
 	}
 
 	/** 
