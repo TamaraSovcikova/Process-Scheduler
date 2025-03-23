@@ -39,3 +39,8 @@ public class EventLog {
 		this.PCBLog.add(PCB);
 	}
 }
+
+//Stores execution logs.
+//Tracks:
+//Completion history (completionLog)
+//PCB states over time (PCBLog)

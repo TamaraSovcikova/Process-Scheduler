@@ -51,3 +51,9 @@ public class CPU extends Thread {
 	}
 
 }
+
+//Executes processes by running their Python script.
+//Uses ProcessBuilder to execute the script.
+//Simulates execution time using Thread.sleep(CPUBurstTime). Without Thread.sleep(), 
+//the process would start and potentially complete too quickly; the process execution might not align with expected scheduling behaviour.
+//Updates the PCB with execution details (termination status, the number of context switches, execution time).

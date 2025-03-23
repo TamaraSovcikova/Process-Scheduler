@@ -148,3 +148,13 @@ public class ProcessControlBlock {
 	}
 
 }
+
+
+//Represents a process in the OS.
+//Contains:
+//Process ID (PID)
+//Current state (New, Ready, Running, Terminated)
+//Priority level (1-10, with higher values meaning higher priority)
+//Timing info (Arrival time, CPU burst time, execution time)
+//Python script path
+//Context switch count 

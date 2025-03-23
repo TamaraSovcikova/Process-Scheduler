@@ -45,3 +45,6 @@ public class Dispatcher implements Runnable {
 	}
 
 }
+
+//Manages execution by selecting one process at a time.
+//Calls Scheduler’s runAlgorithm(), which executes the chosen scheduling algorithm.

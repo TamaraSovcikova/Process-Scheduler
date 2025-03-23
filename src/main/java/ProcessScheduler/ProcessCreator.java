@@ -39,3 +39,7 @@ public class ProcessCreator implements Runnable {
 	
 
 }
+
+//Fetches processes from JobQueue.
+//Updates the process state to "ready".
+//Records arrival time and moves processes to the readyQueue.

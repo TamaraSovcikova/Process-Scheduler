@@ -78,3 +78,11 @@ public class Scheduler {
 
 	}
 }
+
+//Determines which process gets CPU time based on:
+//First-Come, First-Served (FCFS)
+//Round Robin (RR)
+//Non-Preemptive Priority Scheduling (Note: You only need to 
+//		implement non-preemptive priority scheduling. This means that once a process starts running, it continues until completion or blocking)
+
+

@@ -53,17 +53,17 @@ public class Main {
 		if (optionalArgs != null) {
 			algorithm = optionalArgs[1];
 			fileSource = optionalArgs[0];
-			quantum = Long.parseLong(optionalArgs[2]);
+			quantum = Long.parseLong(optionalArgs[2]); //The quantum is only applicable for Round Robin scheduling
 		}
 		// initialise threads and data structures used
-		readyQueue = new LinkedList<ProcessControlBlock>();
-		jobQueue = new JobQueue();
+		readyQueue = new LinkedList<ProcessControlBlock>(); // manages processes ready for execution
+		jobQueue = new JobQueue(); //Stores incoming processes
 
-		processCreator = new Thread(new ProcessCreator(jobQueue, readyQueue, log));
+		processCreator = new Thread(new ProcessCreator(jobQueue, readyQueue, log)); // 1/3 threads used for scheduling process - Moves processes from the job queue to the ready queue
 
 		Scheduler scheduler = new Scheduler(readyQueue, algorithm, quantum, log);
-		dispatcher = new Thread(new Dispatcher(readyQueue, scheduler));
-
+		dispatcher = new Thread(new Dispatcher(readyQueue, scheduler)); // 2/3 threads used for scheduling process - Selects and executes processes based on the algorithm
+		
 		// read the InputScripts, creates ProcessControlBlock for each process, adds it
 		// to the JobQueue
 		jobQueue.readFile(fileSource);
@@ -118,3 +118,39 @@ public class Main {
 		return log;
 	}
 }
+
+/* 
+NOTES FOR MY BETTER UNDERSTANDING: 
+
+Main.java: Handles user input parsing and initialises necessary components.
+JobQueue: Reads the input file, creates ProcessControlBlock (PCB) objects, and stores them.
+ProcessCreator: Moves processes from JobQueue to readyQueue.
+Dispatcher: Manages scheduling and decides which process runs next.
+CPU: Simulates process execution.
+Scheduler: Implements different scheduling strategies.
+EventLog: Keeps track of execution logs.
+
+
+
+THE ALGORITHM RECAP:
+First-Come, First-Served (FCFS):
+- Selects the first process that arrives and runs it to completion.
+- No preemption.
+
+Round Robin (RR):
+- Uses a time quantum.
+- If a process exceeds the quantum, it gets moved back to the readyQueue, and the next process is scheduled.
+- Needs to track context switches.
+
+Non-Preemptive Priority Scheduling:
+- Selects the highest-priority process in the readyQueue (higher number = higher priority).
+- Once a process starts, it runs until completion (no preemption).
+- If two processes have the same priority, use FCFS.
+
+
+KEY THINGS TO REMMEMBER; 
+- Shared Data (e.g., readyQueue) is synchronized to avoid race conditions.
+- Thread-safe queue operations (e.g., use synchronized blocks or ConcurrentLinkedQueue).
+- Properly update PCB states to prevent inconsistencies.
+
+*/
