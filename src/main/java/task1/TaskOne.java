@@ -149,9 +149,33 @@ public class TaskOne {
     }
 
     public List<String> handleUniq(String[] commandParts, List<String> input) {
-        // 1. Will remove consecutive duplicate lines
-        // 2. Return modified list
-        return new ArrayList<>(); 
+    	List<String> content;
+    	
+    	// If input is provided (via piping), use that
+        if (!input.isEmpty()) {
+            content = new ArrayList<>(input);
+        } 
+        // Otherwise, read from file
+        else {
+            if (commandParts.length < 2) {
+                throw new IllegalArgumentException("Missing filename for uniq");
+            }
+            content = readFile(commandParts[1]);
+        }
+        
+        List<String> result = new ArrayList<>();
+        if (!content.isEmpty()) {
+            result.add(content.get(0)); // Making sure to always add the first line
+
+            for (int i = 1; i < content.size(); i++) {
+                if (!content.get(i).equals(content.get(i - 1))) {
+                    result.add(content.get(i));
+                }
+            }
+        }
+
+        return result;
+        
     }
     
     private List<String> readFile(String filename) {
