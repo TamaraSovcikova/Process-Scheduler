@@ -144,7 +144,12 @@ public class ProcessControlBlock {
 	 * this method is called when PCB execution is finished.
 	 */
 	public void setExecutionTime() {
-	    // TODO
+		//Checking for the case where the process was never scheduled in the first place
+		 if (this.arrivalTime == -1) {
+		        throw new IllegalStateException("Arrival time is not set. We cannot calculate the execution time.");
+		    }
+		 long currentTime = System.nanoTime(); // in nanoseconds
+		 this.executionTime = (currentTime / 1_000_000) - this.arrivalTime; // to milliseconds and calculate
 	}
 
 }
