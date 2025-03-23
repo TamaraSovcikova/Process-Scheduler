@@ -25,7 +25,24 @@ public class ProcessCreator implements Runnable {
 	 * Sets arrival time to current system time.
 	 */
 	public void run() {
-		// TODO
+		//Implementing Synchronisation as a way to ensure only one thread modified the queue at a time		
+        ProcessControlBlock pcb = null;
+       
+        //Using the synchronised keyword for java as learned in lesson
+        synchronized (jobQueue) {            
+            pcb = jobQueue.getQueue().poll(); // Removes PCB form the jobQueue -> poll() returns null if empty, so no need for an extra check
+        }
+
+        if (pcb != null) {
+            pcb.setState("ready");
+            pcb.setArrivalTime(System.currentTimeMillis()); 
+            
+            synchronized (readyQueue) {
+                readyQueue.add(pcb);
+            }
+            
+            log.addPCB(pcb); // Log the PCB
+        }	    
 	}
 
 	public JobQueue getJobQueue() {
