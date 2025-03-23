@@ -121,7 +121,6 @@ public class Main {
 
 /* 
 NOTES FOR MY BETTER UNDERSTANDING: 
-
 Main.java: Handles user input parsing and initialises necessary components.
 JobQueue: Reads the input file, creates ProcessControlBlock (PCB) objects, and stores them.
 ProcessCreator: Moves processes from JobQueue to readyQueue.

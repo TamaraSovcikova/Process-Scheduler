@@ -28,7 +28,6 @@ public class JobQueue {
 	 * @throws FileNotFoundException
 	 */
 	public void readFile(String filePath) throws FileNotFoundException {
-		File file = null;
 		// TODO
 		// Read the file...
 		// Check if the file exists
@@ -37,6 +36,27 @@ public class JobQueue {
 	   /*  if (!file.exists()) {
 	        throw new FileNotFoundException("The file at path " + filePath + " does not exist.");
 	    }*/
+		
+		File file = new File(filePath);
+        if (!file.exists()) {
+            throw new FileNotFoundException("The file at path " + filePath + " does not exist.");
+        }
+        
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine().trim();
+                
+                // Split the line into components (PID, priority, filePath)
+                String[] inputParts = line.split("\\s+");                
+                String PID = inputParts[0];
+                int priority = Integer.parseInt(inputParts[1]);
+                String processPathFile = inputParts[2];
+                
+                addToQueue(PID, priority, processPathFile);
+                
+            }
+        }
+        
 
 	}
 
