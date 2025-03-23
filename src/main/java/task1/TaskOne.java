@@ -127,10 +127,25 @@ public class TaskOne {
     }
 
 
-    public List<String> handleSort(String[] commandParts, List<String> input) {
-        // 1. Will sort the List<String>
-        // 2. Return sorted list
-        return new ArrayList<>(); 
+    public List<String> handleSort(String[] commandParts, List<String> input) {     
+        List<String> content;
+
+        // If input is provided (via piping), use that
+        if (!input.isEmpty()) {
+            content = new ArrayList<>(input);
+        } 
+        // Otherwise, read from file
+        else {
+            if (commandParts.length < 2) {
+                throw new IllegalArgumentException("Missing filename for sort");
+            }
+            content = readFile(commandParts[1]);
+        }
+        
+        Collections.sort(content);
+
+        return content;    	
+ 
     }
 
     public List<String> handleUniq(String[] commandParts, List<String> input) {
