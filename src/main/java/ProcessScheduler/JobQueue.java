@@ -38,26 +38,22 @@ public class JobQueue {
 	    }*/
 		
 		File file = new File(filePath);
-        if (!file.exists()) {
-            throw new FileNotFoundException("The file at path " + filePath + " does not exist.");
-        }
-        
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
-                
-                // Split the line into components (PID, priority, filePath)
-                String[] inputParts = line.split("\\s+");                
-                String PID = inputParts[0];
-                int priority = Integer.parseInt(inputParts[1]);
-                String processPathFile = inputParts[2];
-                
-                addToQueue(PID, priority, processPathFile);
-                
-            }
-        }
-        
+		try (Scanner scanner = new Scanner(file)) {  
+	        while (scanner.hasNextLine()) {
+	            String line = scanner.nextLine().trim();
 
+	            if (!line.startsWith("#")) {  // Ignores commented lines
+	                String[] inputParts = line.split(",");
+	                String PID = inputParts[0].trim();
+	                int priority = Integer.parseInt(inputParts[1].trim());
+	                String processPathFile = inputParts[2].trim();
+	                
+	                addToQueue(PID, priority, processPathFile);
+	            }
+	        }
+	    } catch (FileNotFoundException e) {
+	        throw new FileNotFoundException("The file at path " + filePath + " does not exist.");
+	    } 
 	}
 
 	/** Creates a PCB object and adds it to the jobQueue. 
