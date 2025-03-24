@@ -28,7 +28,12 @@ public class Dispatcher implements Runnable {
 	* you should ensure the ready queue cannot be modified while a PCB object is being dispatched.
 	*/
 	public void run() {
-		// TODO
+		 // By using synchronised we should create a critical section, meaning the ready queue should not be able to be modified while dispatching
+	    synchronized (readyQueue) {
+	        if (!readyQueue.isEmpty()) {  
+	        	 scheduler.runAlgorithm();
+	        }
+	    }
 	}
 
 
@@ -48,3 +53,4 @@ public class Dispatcher implements Runnable {
 
 //Manages execution by selecting one process at a time.
 //Calls Scheduler’s runAlgorithm(), which executes the chosen scheduling algorithm.
+

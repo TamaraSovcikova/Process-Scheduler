@@ -130,23 +130,6 @@ Scheduler: Implements different scheduling strategies.
 EventLog: Keeps track of execution logs.
 
 
-
-THE ALGORITHM RECAP:
-First-Come, First-Served (FCFS):
-- Selects the first process that arrives and runs it to completion.
-- No preemption.
-
-Round Robin (RR):
-- Uses a time quantum.
-- If a process exceeds the quantum, it gets moved back to the readyQueue, and the next process is scheduled.
-- Needs to track context switches.
-
-Non-Preemptive Priority Scheduling:
-- Selects the highest-priority process in the readyQueue (higher number = higher priority).
-- Once a process starts, it runs until completion (no preemption).
-- If two processes have the same priority, use FCFS.
-
-
 KEY THINGS TO REMMEMBER; 
 - Shared Data (e.g., readyQueue) is synchronized to avoid race conditions.
 - Thread-safe queue operations (e.g., use synchronized blocks or ConcurrentLinkedQueue).
