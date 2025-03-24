@@ -59,10 +59,17 @@ public class Scheduler {
 		return -1;
 	}
 	
+	//Non-Preemptive Priority Scheduling Notes:
+	//- Selects the highest-priority process in the readyQueue (higher number = higher priority).
+	//- Once a process starts, it runs until completion (no preemption).
+	//- If two processes have the same priority, use FCFS.
 	public void priorityScheduling() {
 		// TODO
 	}
-
+	
+	//First-Come, First-Served (FCFS):
+		//- Selects the first process that arrives and runs it to completion.
+		//- No preemption.
 	/**
 	 * First Come First Served algorithm.
 	 */
@@ -70,6 +77,10 @@ public class Scheduler {
 		// TODO
 	}
 
+	//Round Robin (RR):
+	//- Uses a time quantum.
+	//- If a process exceeds the quantum, it gets moved back to the readyQueue, and the next process is scheduled.
+	//- Needs to track context switches.
 	/**
 	 * Round Robin algorithm.
 	 */
@@ -82,23 +93,5 @@ public class Scheduler {
 //Determines which process gets CPU time based on:
 //First-Come, First-Served (FCFS)
 //Round Robin (RR)
-//Non-Preemptive Priority Scheduling (Note: You only need to 
-//		implement non-preemptive priority scheduling. This means that once a process starts running, it continues until completion or blocking)
 
-
-
-//THE ALGORITHM RECAP:
-//First-Come, First-Served (FCFS):
-//- Selects the first process that arrives and runs it to completion.
-//- No preemption.
-//
-//Round Robin (RR):
-//- Uses a time quantum.
-//- If a process exceeds the quantum, it gets moved back to the readyQueue, and the next process is scheduled.
-//- Needs to track context switches.
-//
-//Non-Preemptive Priority Scheduling:
-//- Selects the highest-priority process in the readyQueue (higher number = higher priority).
-//- Once a process starts, it runs until completion (no preemption).
-//- If two processes have the same priority, use FCFS.
 

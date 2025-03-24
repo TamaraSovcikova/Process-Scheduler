@@ -39,8 +39,58 @@ public class CPU extends Thread {
 	 * 
 	 */
 	public void run() {
-		// TODO
+		if (PCB == null) return; // No process to execute
+		
+		 // Here I'm incrementing the context switch count since this process is now being scheduled
+        PCB.addContextSwitch();
+		
+		PCB.setState("running");
+        System.out.println(PCB.getPID() + ": Running");
+        
+        PCB.setArrivalTime(System.nanoTime() / 1_000_000);
+        long startTime = System.nanoTime();
+        String output = executeScript(PCB.getProcessPath());      
+        long elapsedTime = (System.nanoTime() - startTime) / 1_000_000; // Convert to ms
+        PCB.setExecutionTime();
+        
+        // Simulating CPU burst time by putting the thread to sleep
+        try {
+            Thread.sleep(elapsedTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        PCB.setState("terminated");  // Process is now done
+        PCB.setPCBResult(output);  // Storing the Python output
+        
+        String logEntry = PCB.getPID() + ": Complete, Context Switches: " + PCB.getContextSwitches() +
+                ", Output: " + output;
+        log.add(logEntry);
+        
 	}
+	
+	private String executeScript(String scriptPath) {
+        StringBuilder output = new StringBuilder();
+        ProcessBuilder pb = new ProcessBuilder("python3", scriptPath);
+
+        try {
+            Process process = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            process.waitFor();
+
+            // Read output from the Python script
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return output.toString().trim();
+    }
 
 	public ProcessControlBlock getPCB() {
 		return this.PCB;
