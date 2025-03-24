@@ -1,6 +1,9 @@
 package ProcessScheduler;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Queue;
 
 public class Scheduler {
@@ -64,7 +67,32 @@ public class Scheduler {
 	//- Once a process starts, it runs until completion (no preemption).
 	//- If two processes have the same priority, use FCFS.
 	public void priorityScheduling() {
-		// TODO
+		if (readyQueue.isEmpty()) return;
+	    List<ProcessControlBlock> sortedQueue = new ArrayList<>(readyQueue);
+	    
+	    // Sorts processes by priority (higher number = higher priority)
+	    // If two processes have the same priority, they should be scheduled in FCFS order.
+	    Collections.sort(sortedQueue, (p1, p2) -> {
+	        if (p1.getPriority() == p2.getPriority()) {
+	            return Long.compare(p1.getArrivalTime(), p2.getArrivalTime()); // FCFS order
+	        }
+	        return Integer.compare(p2.getPriority(), p1.getPriority());
+	    });
+
+	    for (ProcessControlBlock process : sortedQueue) {
+	        readyQueue.remove(process); // Remove from queue since it's running
+
+	        CPU cpu = new CPU(process, log);
+	        cpu.start();
+	        try {
+	            cpu.join(); // Should wait for it to finish
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+
+	        // Log process completion
+	        log.addPCB(process);
+	    }
 	}
 	
 	//First-Come, First-Served (FCFS):
