@@ -83,6 +83,13 @@ public class Scheduler {
 	    for (ProcessControlBlock process : sortedQueue) {
 	        readyQueue.remove(process); // Remove from queue since it's running
 	        
+	     // Print process details before execution
+	        System.out.println("Executing Process - PID: " + process.getPID() +
+	                           ", State: " + process.getState() +
+	                           ", Priority: " + process.getPriority() +
+	                           ", Arrival Time: " + process.getArrivalTime() +
+	                           ", CPU Burst Time: " + process.getCPUBurstTime());
+	        
 	        if (!firstProcess) {
 	            process.addContextSwitch();  // Don't count for first process
 	        }

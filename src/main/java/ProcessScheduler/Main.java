@@ -128,11 +128,4 @@ Dispatcher: Manages scheduling and decides which process runs next.
 CPU: Simulates process execution.
 Scheduler: Implements different scheduling strategies.
 EventLog: Keeps track of execution logs.
-
-
-KEY THINGS TO REMMEMBER; 
-- Shared Data (e.g., readyQueue) is synchronized to avoid race conditions.
-- Thread-safe queue operations (e.g., use synchronized blocks or ConcurrentLinkedQueue).
-- Properly update PCB states to prevent inconsistencies.
-
 */

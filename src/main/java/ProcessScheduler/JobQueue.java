@@ -32,10 +32,6 @@ public class JobQueue {
 		// Check if the file exists
 		// Reads the InputScript file
 		// adds the process from the file to the queue (use addToQueue())
-	   /*  if (!file.exists()) {
-	        throw new FileNotFoundException("The file at path " + filePath + " does not exist.");
-	    }*/
-		
 		File file = new File(filePath);
 		try (Scanner scanner = new Scanner(file)) {  
 	        while (scanner.hasNextLine()) {
@@ -88,13 +84,3 @@ public class JobQueue {
 	}
 
 }
-
-//Reads a text file containing process information.
-//Creates Process Control Block (PCB) objects.
-//Stores processes in a queue.
-//Uses generateBurst(String PythonPathFile) to estimate CPU burst time.
-//It is normal for a process to have a slightly different burst time each time it is run.
-//You do not need to modify this function for marking consistency.
-//Calls readFile(String filePath), which:
-//Reads the process information from a file.
-//Ensures valid parameters before adding processes to the queue.

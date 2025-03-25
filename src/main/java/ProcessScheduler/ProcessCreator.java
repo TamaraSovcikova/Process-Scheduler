@@ -1,6 +1,4 @@
 package ProcessScheduler;
-
-
 import java.util.Queue;
 
 /**
@@ -24,31 +22,33 @@ public class ProcessCreator implements Runnable {
 	 * adds PCB to log.
 	 * Sets arrival time to current system time.
 	 */
-	public void run() {    
-      //Implementing Synchronisation as a way to ensure only one thread modified the queue at a time	
-        while (true) { 
-            ProcessControlBlock pcb = null;
-            
-          //Using the synchronised keyword for java as learned in lesson
-            synchronized (jobQueue) {
-                if (jobQueue.getQueue().isEmpty()) {
-                    break; // Exit when no more processes are left
-                }
-                pcb = jobQueue.getQueue().poll();
-            }
+	 public void run() {
+	        while (true) {
+	            ProcessControlBlock pcb = null;
+	            
+	            //Using synchronised keyword
+	            synchronized (jobQueue) {
+	                if (jobQueue.getQueue().isEmpty()) {
+	                	System.out.println("ProcessCreator: Job queue is empty, stopping."); //TEMP
+	                    break; // Stop when all jobs are processed
+	                }
+	                pcb = jobQueue.getQueue().poll();
+	            }
 
-            if (pcb != null) {
-                pcb.setState("ready");
-                pcb.setArrivalTime(System.currentTimeMillis());
+	            if (pcb != null) {
+	                pcb.setState("ready");
+	                pcb.setArrivalTime(System.currentTimeMillis());
 
-                synchronized (readyQueue) {
-                    readyQueue.add(pcb);
-                }
+	                synchronized (readyQueue) {
+	                    readyQueue.add(pcb);
+	                    System.out.println("ProcessCreator: Added process " + pcb.getPID() + " to readyQueue."); //TEMP
+	                    readyQueue.notifyAll(); // Notify Dispatcher that a process is ready
+	                }
 
-                log.addPCB(pcb);
-            }
-        }
-	}
+	                log.addPCB(pcb);
+	            }
+	        }
+	 }
 
 	public JobQueue getJobQueue() {
 		return jobQueue;
@@ -57,9 +57,6 @@ public class ProcessCreator implements Runnable {
 	public Queue<ProcessControlBlock> getReadyQueue() {
 		return readyQueue;
 	}
-	
-	
-
 }
 
 //Fetches processes from JobQueue.

@@ -14,6 +14,7 @@ public class Dispatcher implements Runnable {
 	private Queue<ProcessControlBlock> readyQueue = null;
 	private Scheduler scheduler = null;
 	private boolean dispatched = false; // ensures only one process is dispatched at a time.
+	private boolean running = true; // Termination flag
 
 	/**Constructor to assign input parameters to instance fields.
 	 * @param readyQueue
@@ -28,14 +29,27 @@ public class Dispatcher implements Runnable {
 	* you should ensure the ready queue cannot be modified while a PCB object is being dispatched.
 	*/
 	public void run() {
-		 // By using synchronised we should create a critical section, meaning the ready queue should not be able to be modified while dispatching
-	    synchronized (readyQueue) {
-	        if (!readyQueue.isEmpty()) {  
-	        	 scheduler.runAlgorithm();
-	        }
-	    }
-	}
+        while (running) {
+            synchronized (readyQueue) {
+                while (readyQueue.isEmpty()) {
+                    try {
+                        readyQueue.wait(); // Wait if no processes
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
+                scheduler.runAlgorithm();
+            }
+        }
+    }
 
+    public void stopDispatcher() {
+        running = false;
+        synchronized (readyQueue) {
+            readyQueue.notifyAll();
+        }
+    }
 
 	public ProcessControlBlock getPCB() {
 		return this.PCB;
@@ -48,7 +62,6 @@ public class Dispatcher implements Runnable {
 	public boolean getDispatched() {
 		return this.dispatched;
 	}
-
 }
 
 //Manages execution by selecting one process at a time.
