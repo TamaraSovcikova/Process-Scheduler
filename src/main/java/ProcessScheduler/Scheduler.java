@@ -66,46 +66,41 @@ public class Scheduler {
 	//- Selects the highest-priority process in the readyQueue (higher number = higher priority).
 	//- Once a process starts, it runs until completion (no preemption).
 	//- If two processes have the same priority, use FCFS.
+	
 	public void priorityScheduling() {
-		if (readyQueue.isEmpty()) return;
-	    List<ProcessControlBlock> sortedQueue = new ArrayList<>(readyQueue);	    
+		ProcessControlBlock highestPriorityProcess = null;
 	    
-	    // Sorts processes by priority (higher number = higher priority)
-	    // If two processes have the same priority, they should be scheduled in FCFS order.
-	    Collections.sort(sortedQueue, (p1, p2) -> {
-	        if (p1.getPriority() == p2.getPriority()) {
-	            return Long.compare(p1.getArrivalTime(), p2.getArrivalTime()); // FCFS order
-	        }
-	        return Integer.compare(p2.getPriority(), p1.getPriority());
-	    });
-	    
-	    boolean firstProcess = true;
-	    for (ProcessControlBlock process : sortedQueue) {
-	        readyQueue.remove(process); // Remove from queue since it's running
-	        
-	     // Print process details before execution
-	        System.out.println("Executing Process - PID: " + process.getPID() +
-	                           ", State: " + process.getState() +
-	                           ", Priority: " + process.getPriority() +
-	                           ", Arrival Time: " + process.getArrivalTime() +
-	                           ", CPU Burst Time: " + process.getCPUBurstTime());
-	        
-	        if (!firstProcess) {
-	            process.addContextSwitch();  // Don't count for first process
-	        }
-	        firstProcess = false;
+	    synchronized (readyQueue) {
+            // Finds the highest-priority process in the queue
+            for (ProcessControlBlock process : readyQueue) {
+                if (highestPriorityProcess == null || 
+                    process.getPriority() > highestPriorityProcess.getPriority() || 
+                    (process.getPriority() == highestPriorityProcess.getPriority() &&
+                     process.getArrivalTime() < highestPriorityProcess.getArrivalTime())) {
+                    
+                    highestPriorityProcess = process;
+                }
+            }
+            readyQueue.remove(highestPriorityProcess);
+        }
 
-	        CPU cpu = new CPU(process, log);
-	        cpu.start();
-	        try {
-	            cpu.join(); // Should wait for it to finish
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
+        // Print process details before execution
+        System.out.println("Executing Process - PID: " + highestPriorityProcess.getPID() +
+                           ", State: " + highestPriorityProcess.getState() +
+                           ", Priority: " + highestPriorityProcess.getPriority() +
+                           ", Arrival Time: " + highestPriorityProcess.getArrivalTime() +
+                           ", CPU Burst Time: " + highestPriorityProcess.getCPUBurstTime());
 
-	        // Log process completion
-	        log.addPCB(process);
-	    }
+        // Execute the process
+        CPU cpu = new CPU(highestPriorityProcess, log);
+        cpu.start();
+        
+        // Wait for the process to finish before scheduling the next one (non-preemptive)
+        try {
+            cpu.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	//First-Come, First-Served (FCFS):
