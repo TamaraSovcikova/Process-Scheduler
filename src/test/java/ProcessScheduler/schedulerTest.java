@@ -2,6 +2,7 @@ package ProcessScheduler;
 
 import static org.junit.Assert.*;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.Queue;
 import org.junit.Assert;
@@ -9,6 +10,24 @@ import org.junit.Test;
 
 public class schedulerTest {
 
+	@Before
+    public void setup() throws Exception {
+        resetPrivateStaticField(Main.class, "processCreator", null);
+        resetPrivateStaticField(Main.class, "dispatcher", null);
+        resetPrivateStaticField(Main.class, "jobQueue", new JobQueue());
+        resetPrivateStaticField(Main.class, "readyQueue", new LinkedList<ProcessControlBlock>());
+        resetPrivateStaticField(Main.class, "fileSource", null);
+        resetPrivateStaticField(Main.class, "algorithm", null);
+        resetPrivateStaticField(Main.class, "quantum", 50L);
+        resetPrivateStaticField(Main.class, "log", new EventLog());
+    }
+
+    private void resetPrivateStaticField(Class<?> clazz, String fieldName, Object newValue) throws Exception {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(null, newValue); // Set static field to new value
+    }
+	
 	@Test
 	public void testFCFS() {
 		String[] args = new String[] { "InputScripts1.txt", "FCFS", "0" }; // runs main method with arguments.
