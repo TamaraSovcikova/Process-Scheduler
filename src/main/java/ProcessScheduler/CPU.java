@@ -38,32 +38,27 @@ public class CPU extends Thread {
 	 * 0, Output: Sum is 9)
 	 * 
 	 */
-	public void run() {
-		if (PCB == null) return; // No process to execute
-		
-		PCB.setState("running");
-        System.out.println(PCB.getPID() + ": Running");
+	public void run() {	
+		 long startTime = System.nanoTime();
+        // Execute the Python script using the path from PCB
+        String scriptPath = PCB.getProcessPath();
+        String output = executeScript(scriptPath);
         
-        PCB.setArrivalTime(System.nanoTime() / 1_000_000);
-        long startTime = System.nanoTime();
-        String output = executeScript(PCB.getProcessPath());      
-        long elapsedTime = (System.nanoTime() - startTime) / 1_000_000; // Convert to ms
+        PCB.setPCBResult(output);
+        PCB.setState("terminated");
+        PCB.addContextSwitch();
         PCB.setExecutionTime();
-        
-        // Simulating CPU burst time by putting the thread to sleep
+
+        // Save the execution log in EventLog
+        log.add("P" + PCB.getPID() + ": Complete, Context Switches: " 
+                      + PCB.getContextSwitches() + ", Output: " + output);
+
+        // Sleep to simulate the process running time (use the actual burst time or any relevant value)
         try {
-            Thread.sleep(elapsedTime);
+            TimeUnit.MILLISECONDS.sleep(PCB.getCPUBurstTime()); // Sleep for the CPU burst time
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-        PCB.setState("terminated");  // Process is now done
-        PCB.setPCBResult(output);  // Storing the Python output
-        
-        String logEntry = PCB.getPID() + ": Complete, Context Switches: " + PCB.getContextSwitches() +
-                ", Output: " + output;
-        log.add(logEntry);
-        
 	}
 	
 	private String executeScript(String scriptPath) {
@@ -72,20 +67,16 @@ public class CPU extends Thread {
 
         try {
             Process process = pb.start();
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            process.waitFor();
-
-            // Read output from the Python script
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
             }
-
+            process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
         return output.toString().trim();
     }
 
