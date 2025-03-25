@@ -41,9 +41,6 @@ public class CPU extends Thread {
 	public void run() {
 		if (PCB == null) return; // No process to execute
 		
-		 // Here I'm incrementing the context switch count since this process is now being scheduled
-        PCB.addContextSwitch();
-		
 		PCB.setState("running");
         System.out.println(PCB.getPID() + ": Running");
         

@@ -68,7 +68,7 @@ public class Scheduler {
 	//- If two processes have the same priority, use FCFS.
 	public void priorityScheduling() {
 		if (readyQueue.isEmpty()) return;
-	    List<ProcessControlBlock> sortedQueue = new ArrayList<>(readyQueue);
+	    List<ProcessControlBlock> sortedQueue = new ArrayList<>(readyQueue);	    
 	    
 	    // Sorts processes by priority (higher number = higher priority)
 	    // If two processes have the same priority, they should be scheduled in FCFS order.
@@ -78,9 +78,15 @@ public class Scheduler {
 	        }
 	        return Integer.compare(p2.getPriority(), p1.getPriority());
 	    });
-
+	    
+	    boolean firstProcess = true;
 	    for (ProcessControlBlock process : sortedQueue) {
 	        readyQueue.remove(process); // Remove from queue since it's running
+	        
+	        if (!firstProcess) {
+	            process.addContextSwitch();  // Don't count for first process
+	        }
+	        firstProcess = false;
 
 	        CPU cpu = new CPU(process, log);
 	        cpu.start();

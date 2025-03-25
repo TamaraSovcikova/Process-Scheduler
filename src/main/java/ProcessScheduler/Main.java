@@ -26,7 +26,7 @@ public class Main {
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		// parameters: name_of_file, algorithm, time_quantumn
 		// algorithms: FCFS, RR, Priority
-		String[] parameters = new String[] { "InputScripts2.txt", "RR", "100" };
+		String[] parameters = new String[] { "InputScripts5.txt", "Priority", "50" };
 		initialise(parameters);
 		finaliseThreads();
 
