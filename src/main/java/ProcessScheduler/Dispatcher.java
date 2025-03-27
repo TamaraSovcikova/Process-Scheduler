@@ -29,7 +29,7 @@ public class Dispatcher implements Runnable {
 	* you should ensure the ready queue cannot be modified while a PCB object is being dispatched.
 	*/
 	public void run() {
-        while (running) {
+        while (true) {
             synchronized (readyQueue) {
                 while (readyQueue.isEmpty()) {
                     try {
@@ -41,13 +41,6 @@ public class Dispatcher implements Runnable {
                 }
                 scheduler.runAlgorithm();
             }
-        }
-    }
-
-    public void stopDispatcher() {
-        running = false;
-        synchronized (readyQueue) {
-            readyQueue.notifyAll();
         }
     }
 
