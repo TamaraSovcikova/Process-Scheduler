@@ -66,10 +66,7 @@ public class Main {
 		// read the InputScripts, creates ProcessControlBlock for each process, adds it
 		// to the JobQueue
 		jobQueue.readFile(fileSource);
-		
-		System.out.println(jobQueue.getQueue().size());
 		processCreator.start();
-		System.out.println(readyQueue.size());
 		dispatcher.start();
 	}
 

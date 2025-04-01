@@ -30,15 +30,25 @@ public class Dispatcher implements Runnable {
 	* then get the schedular to run the required algorithm
 	* you should ensure the ready queue cannot be modified while a PCB object is being dispatched.
 	*/
-	public void run() {	    
-	    	while (!readyQueue.isEmpty() && !getDispatched()) {
-	    	    synchronized (readyQueue) {
-	    	    	setDispatched(false);
-	    	        scheduler.runAlgorithm();
-	    	        setDispatched(true);
-	    	    }
-	    	}
-	    }	    
+	public void run() {    
+		while (true) { 
+			synchronized (this.readyQueue) {
+				if (this.readyQueue.isEmpty()) {
+					try {
+						this.readyQueue.wait(10);  // Wait for new processes
+						if (this.readyQueue.isEmpty()) {
+							break;  // Exit if still empty after waiting
+						}
+					} catch (InterruptedException e) {
+					// Handle interruption
+					}
+				}
+			}
+			    setDispatched(false);
+			    scheduler.runAlgorithm();
+			    setDispatched(true);
+			}
+		}    
 
 	public ProcessControlBlock getPCB() {
 		return this.PCB;
