@@ -39,26 +39,31 @@ public class CPU extends Thread {
 	 * 
 	 */
 	public void run() {	
-		 long startTime = System.nanoTime();
+		System.out.println(PCB.getPID() + ": Running");
+		
+		long startTime = System.nanoTime();
         // Execute the Python script using the path from PCB
         String scriptPath = PCB.getProcessPath();
         String output = executeScript(scriptPath);
+        long endTime = System.nanoTime(); 
+        long executionTime = (endTime - startTime) / 1_000_000;
+
+        // Simulate execution time (burst time) by sleeping
+        try {
+			Thread.sleep(executionTime);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
         
         PCB.setPCBResult(output);
         PCB.setState("terminated");
         PCB.addContextSwitch();
-        PCB.setExecutionTime();
 
         // Save the execution log in EventLog
-        log.add("P" + PCB.getPID() + ": Complete, Context Switches: " 
+        log.add(PCB.getPID() + ": Complete, Context Switches: " 
                       + PCB.getContextSwitches() + ", Output: " + output);
-
-        // Sleep to simulate the process running time (use the actual burst time or any relevant value)
-        try {
-            TimeUnit.MILLISECONDS.sleep(PCB.getCPUBurstTime()); // Sleep for the CPU burst time
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println(PCB.getPID() + ": Complete, Context Switches: " 
+                + PCB.getContextSwitches() + ", Output: " + output);
 	}
 	
 	private String executeScript(String scriptPath) {

@@ -1,6 +1,7 @@
 package ProcessScheduler;
 
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Dispatcher is a thread which checks the readyQueue for a process and
@@ -11,7 +12,8 @@ public class Dispatcher implements Runnable {
 	 * Instance fields for accessing ready queue and scheduler object
 	 */
 	private ProcessControlBlock PCB = null;
-	private Queue<ProcessControlBlock> readyQueue = null;
+//	private Queue<ProcessControlBlock> readyQueue = null;
+	private static Queue<ProcessControlBlock> readyQueue = new ConcurrentLinkedQueue<>();
 	private Scheduler scheduler = null;
 	private boolean dispatched = false; // ensures only one process is dispatched at a time.
 	private boolean running = true; // Termination flag
@@ -29,20 +31,18 @@ public class Dispatcher implements Runnable {
 	* you should ensure the ready queue cannot be modified while a PCB object is being dispatched.
 	*/
 	public void run() {
-        while (true) {
-            synchronized (readyQueue) {
-                while (readyQueue.isEmpty()) {
-                    try {
-                        readyQueue.wait(); // Wait if no processes
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-                }
-                scheduler.runAlgorithm();
-            }
-        }
-    }
+	    while (true) {
+	    	if (!readyQueue.isEmpty()) {
+	    	    synchronized (readyQueue) {
+	    	        scheduler.runAlgorithm();
+	    	    }
+	    	}      
+//	        if (readyQueue.isEmpty()) {
+//	        	System.out.println("All processes completed. Dispatcher thread ending.");
+//	            break;  // No more processes to schedule, exit the loop
+//	        }
+	    }	    
+	}
 
 	public ProcessControlBlock getPCB() {
 		return this.PCB;

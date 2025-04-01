@@ -1,5 +1,6 @@
 package ProcessScheduler;
 import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *Thread to obtain a job from the job queue and add it to the ready queue.
@@ -22,33 +23,34 @@ public class ProcessCreator implements Runnable {
 	 * adds PCB to log.
 	 * Sets arrival time to current system time.
 	 */
-	 public void run() {
-	        while (true) {
-	            ProcessControlBlock pcb = null;
-	            
-	            //Using synchronised keyword
-	            synchronized (jobQueue) {
-	                if (jobQueue.getQueue().isEmpty()) {
-	                	System.out.println("ProcessCreator: Job queue is empty, stopping."); //TEMP
-	                    break; // Stop when all jobs are processed
-	                }
-	                pcb = jobQueue.getQueue().poll();
+	public void run() {
+	    while (true) {
+	        ProcessControlBlock pcb = null;
+	        
+	        synchronized (jobQueue) {
+	            if (jobQueue.getQueue().isEmpty()) {
+	                System.out.println("ProcessCreator: Job queue is empty, stopping.");
+	                break;
 	            }
 
-	            if (pcb != null) {
-	                pcb.setState("ready");
-	                pcb.setArrivalTime(System.currentTimeMillis());
-
-	                synchronized (readyQueue) {
-	                    readyQueue.add(pcb);
-	                    System.out.println("ProcessCreator: Added process " + pcb.getPID() + " to readyQueue."); //TEMP
-	                    readyQueue.notifyAll(); // Notify Dispatcher that a process is ready
-	                }
-
-	                log.addPCB(pcb);
-	            }
+	            pcb = jobQueue.getQueue().poll();
 	        }
-	 }
+
+	        if (pcb != null) {
+	            pcb.setState("ready");
+	            synchronized (readyQueue) {
+	                readyQueue.add(pcb);
+	            }
+
+	            System.out.println("ProcessCreator: Added process " + pcb.getPID() + " to readyQueue.");
+	            log.addPCB(pcb);
+	            pcb.setArrivalTime(System.currentTimeMillis());
+	        }
+
+	        // Yield CPU to allow Dispatcher to run
+	        Thread.yield();
+	    }
+	}
 
 	public JobQueue getJobQueue() {
 		return jobQueue;
@@ -58,7 +60,3 @@ public class ProcessCreator implements Runnable {
 		return readyQueue;
 	}
 }
-
-//Fetches processes from JobQueue.
-//Updates the process state to "ready".
-//Records arrival time and moves processes to the readyQueue.

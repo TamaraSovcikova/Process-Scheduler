@@ -68,9 +68,9 @@ public class Scheduler {
 	//- If two processes have the same priority, use FCFS.
 	
 	public void priorityScheduling() {
+		
 		ProcessControlBlock highestPriorityProcess = null;
 	    
-	    synchronized (readyQueue) {
             // Finds the highest-priority process in the queue
             for (ProcessControlBlock process : readyQueue) {
                 if (highestPriorityProcess == null || 
@@ -82,7 +82,6 @@ public class Scheduler {
                 }
             }
             readyQueue.remove(highestPriorityProcess);
-        }
 
         // Print process details before execution
         System.out.println("Executing Process - PID: " + highestPriorityProcess.getPID() +
