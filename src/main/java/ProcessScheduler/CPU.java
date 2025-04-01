@@ -41,12 +41,16 @@ public class CPU extends Thread {
 	public void run() {	
 		System.out.println(PCB.getPID() + ": Running");
 		
-		long startTime = System.nanoTime();
+		PCB.setArrivalTime(System.nanoTime());
+		// long startTime = System.nanoTime(); 
+
         // Execute the Python script using the path from PCB
         String scriptPath = PCB.getProcessPath();
         String output = executeScript(scriptPath);
-        long endTime = System.nanoTime(); 
-        long executionTime = (endTime - startTime) / 1_000_000;
+        
+        //long endTime = System.nanoTime(); 
+        PCB.setExecutionTime();
+        long executionTime = PCB.getExecutionTime();
 
         // Simulate execution time (burst time) by sleeping
         try {
@@ -57,13 +61,13 @@ public class CPU extends Thread {
         
         PCB.setPCBResult(output);
         PCB.setState("terminated");
-        PCB.addContextSwitch();
+        //TODO Handle context switching
 
         // Save the execution log in EventLog
         log.add(PCB.getPID() + ": Complete, Context Switches: " 
                       + PCB.getContextSwitches() + ", Output: " + output);
         System.out.println(PCB.getPID() + ": Complete, Context Switches: " 
-                + PCB.getContextSwitches() + ", Output: " + output);
+                + PCB.getContextSwitches() + ", Output: " + output + ", Execution Time: " + PCB.getExecutionTime() + "ms");
 	}
 	
 	private String executeScript(String scriptPath) {

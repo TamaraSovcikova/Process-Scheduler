@@ -149,7 +149,7 @@ public class ProcessControlBlock {
 		        throw new IllegalStateException("Arrival time is not set. We cannot calculate the execution time.");
 		    }
 		 long currentTime = System.nanoTime(); // in nanoseconds
-		 this.executionTime = (currentTime / 1_000_000) - this.arrivalTime; // to milliseconds and calculate
+		 this.executionTime = (currentTime - this.arrivalTime) / 1000000 ; // to milliseconds and calculate
 	}
 
 }
