@@ -60,14 +60,16 @@ public class Main {
 		jobQueue = new JobQueue(); //Stores incoming processes
 
 		processCreator = new Thread(new ProcessCreator(jobQueue, readyQueue, log)); // 1/3 threads used for scheduling process - Moves processes from the job queue to the ready queue
-
+		
 		Scheduler scheduler = new Scheduler(readyQueue, algorithm, quantum, log);
 		dispatcher = new Thread(new Dispatcher(readyQueue, scheduler)); // 2/3 threads used for scheduling process - Selects and executes processes based on the algorithm
-		
 		// read the InputScripts, creates ProcessControlBlock for each process, adds it
 		// to the JobQueue
 		jobQueue.readFile(fileSource);
+		
+		System.out.println(jobQueue.getQueue().size());
 		processCreator.start();
+		System.out.println(readyQueue.size());
 		dispatcher.start();
 	}
 
