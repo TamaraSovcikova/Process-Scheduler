@@ -83,13 +83,6 @@ public class Scheduler {
 	            }
 	            readyQueue.remove(highestPriorityProcess);
 	
-	        // Print process details before execution
-	        System.out.println("Executing Process - PID: " + highestPriorityProcess.getPID() +
-	                           ", State: " + highestPriorityProcess.getState() +
-	                           ", Priority: " + highestPriorityProcess.getPriority() +
-	                           ", Arrival Time: " + highestPriorityProcess.getArrivalTime() +
-	                           ", CPU Burst Time: " + highestPriorityProcess.getCPUBurstTime());
-	
 	        CPU cpu = new CPU(highestPriorityProcess, log);
 	        cpu.start();
 	        
@@ -111,14 +104,6 @@ public class Scheduler {
 	public void FCFS() {
 		 synchronized(readyQueue) {
 	        ProcessControlBlock firstProcess = readyQueue.poll();
-	
-	        System.out.println("Executing Process - PID: " + firstProcess.getPID() +
-	                           ", State: " + firstProcess.getState() +
-	                           ", Priority: " + firstProcess.getPriority() +
-	                           ", Arrival Time: " + firstProcess.getArrivalTime() +
-	                           ", CPU Burst Time: " + firstProcess.getCPUBurstTime());
-	
-	  
 	        CPU cpu = new CPU(firstProcess, log);
 	        cpu.start();
 	
@@ -138,14 +123,31 @@ public class Scheduler {
 	/**
 	 * Round Robin algorithm.
 	 */
-	public void RR() {
-		// TODO
-
+	public void RR() {		
+		synchronized(readyQueue) {
+			ProcessControlBlock currentP = readyQueue.poll();
+			long remainingBurstTime = currentP.getCPUBurstTime();
+			long timeToExecute = Math.min(remainingBurstTime, timeQuantum);  
+			
+			 // Simulate using the time quantum for execution
+			currentP.setCPUBurstTime(remainingBurstTime - timeToExecute);
+			CPU cpu = new CPU(currentP, log);
+			cpu.start();
+			
+			try {
+			    cpu.join();
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+			
+			 // If the process is not completed, put it back at the end of the queue
+			if (currentP.getCPUBurstTime() > 0) {
+				System.out.println(currentP.getPID() + ": Quantum exceeded");
+				currentP.addContextSwitch();
+			    readyQueue.offer(currentP);			    
+			}
+		}
 	}
 }
-
-//Determines which process gets CPU time based on:
-//First-Come, First-Served (FCFS)
-//Round Robin (RR)
 
 

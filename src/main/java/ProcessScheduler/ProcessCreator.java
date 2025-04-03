@@ -39,8 +39,7 @@ public class ProcessCreator implements Runnable {
 		            System.out.println(pcb.printProcessControlBlock());
 		            log.addPCB(pcb);
 	        		
-	        	}
-	        	System.out.println("ProcessCreator: Job queue is empty, stopping.");
+	        	}	        	
 	        }
 	    }
 
