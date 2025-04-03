@@ -90,7 +90,6 @@ public class Scheduler {
 	                           ", Arrival Time: " + highestPriorityProcess.getArrivalTime() +
 	                           ", CPU Burst Time: " + highestPriorityProcess.getCPUBurstTime());
 	
-	        // Execute the process
 	        CPU cpu = new CPU(highestPriorityProcess, log);
 	        cpu.start();
 	        
@@ -110,7 +109,26 @@ public class Scheduler {
 	 * First Come First Served algorithm.
 	 */
 	public void FCFS() {
-		// TODO
+		 synchronized(readyQueue) {
+	        ProcessControlBlock firstProcess = readyQueue.poll();
+	
+	        System.out.println("Executing Process - PID: " + firstProcess.getPID() +
+	                           ", State: " + firstProcess.getState() +
+	                           ", Priority: " + firstProcess.getPriority() +
+	                           ", Arrival Time: " + firstProcess.getArrivalTime() +
+	                           ", CPU Burst Time: " + firstProcess.getCPUBurstTime());
+	
+	  
+	        CPU cpu = new CPU(firstProcess, log);
+	        cpu.start();
+	
+	        // Wait for the process to finish before scheduling the next one as its still (non-preemptive)
+	        try {
+	            cpu.join();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+		 }
 	}
 
 	//Round Robin (RR):
