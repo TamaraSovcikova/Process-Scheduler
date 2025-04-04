@@ -82,11 +82,12 @@ public class Scheduler {
 	                }
 	            }
 	            readyQueue.remove(highestPriorityProcess);
-	
+	        
+	        // Ensure burst time is zero after execution to trigger completion message
+		    highestPriorityProcess.setCPUBurstTime(0);
 	        CPU cpu = new CPU(highestPriorityProcess, log);
 	        cpu.start();
 	        
-	        // Wait for the process to finish before scheduling the next one (non-preemptive)
 	        try {
 	            cpu.join();
 	        } catch (InterruptedException e) {
@@ -104,15 +105,19 @@ public class Scheduler {
 	public void FCFS() {
 		 synchronized(readyQueue) {
 	        ProcessControlBlock firstProcess = readyQueue.poll();
+	        
+	        // Ensure burst time is zero after execution to trigger completion message
+	        firstProcess.setCPUBurstTime(0);
 	        CPU cpu = new CPU(firstProcess, log);
 	        cpu.start();
 	
-	        // Wait for the process to finish before scheduling the next one as its still (non-preemptive)
 	        try {
 	            cpu.join();
 	        } catch (InterruptedException e) {
 	            e.printStackTrace();
 	        }
+	        
+	        
 		 }
 	}
 
@@ -145,9 +150,10 @@ public class Scheduler {
 				System.out.println(currentP.getPID() + ": Quantum exceeded");
 				currentP.addContextSwitch();
 			    readyQueue.offer(currentP);			    
-			}
+			}	
 		}
 	}
 }
+
 
 
