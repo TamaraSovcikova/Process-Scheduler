@@ -35,7 +35,7 @@ public class ProcessCreator implements Runnable {
 		                readyQueue.add(pcb);
 		            }
 
-		            pcb.setArrivalTime(System.currentTimeMillis());
+		            pcb.setArrivalTime(System.nanoTime());
 		            System.out.println(pcb.printProcessControlBlock());
 		            log.addPCB(pcb);
 	        		

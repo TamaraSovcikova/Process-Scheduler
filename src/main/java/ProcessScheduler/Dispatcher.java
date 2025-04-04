@@ -12,8 +12,7 @@ public class Dispatcher implements Runnable {
 	 * Instance fields for accessing ready queue and scheduler object
 	 */
 	private ProcessControlBlock PCB = null;
-//	private Queue<ProcessControlBlock> readyQueue = null;
-	private static Queue<ProcessControlBlock> readyQueue = new ConcurrentLinkedQueue<>();
+	private Queue<ProcessControlBlock> readyQueue = new ConcurrentLinkedQueue<>();
 	private Scheduler scheduler = null;
 	private boolean dispatched = false; // ensures only one process is dispatched at a time.
 	private boolean running = true; // Termination flag
