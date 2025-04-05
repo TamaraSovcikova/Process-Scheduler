@@ -1,4 +1,6 @@
 P01,1,process1.py
-P02,7,process2.py
-P03,6,process3.py
-P04,3,process0.py
+P03,7,process2.py
+P05,3,process3.py
+P04,4,process0.py
+P02,10,process4.py
+P06,1,process5.py

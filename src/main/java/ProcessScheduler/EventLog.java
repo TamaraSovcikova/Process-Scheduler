@@ -38,6 +38,11 @@ public class EventLog {
 	public void addPCB(ProcessControlBlock PCB) {
 		this.PCBLog.add(PCB);
 	}
+	//Added for debugging
+	public void clear() {
+        this.completionLog.clear();
+        this.PCBLog.clear();
+    }
 }
 
 //Stores execution logs.

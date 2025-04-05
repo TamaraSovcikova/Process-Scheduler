@@ -25,21 +25,22 @@ public class ProcessCreator implements Runnable {
 	 */
 	public void run() {		  
 	        ProcessControlBlock pcb = null;
+	       
 	        
 	        synchronized (jobQueue) {
 	        	while (!jobQueue.getQueue().isEmpty()) 
 	        	{
 		            pcb = jobQueue.getQueue().poll();
 		            pcb.setState("ready");
+		            
 		            synchronized (readyQueue) {
 		                readyQueue.add(pcb);
 		            }
 
 		            pcb.setArrivalTime(System.nanoTime());
 		            System.out.println(pcb.printProcessControlBlock());
-		            log.addPCB(pcb);
-	        		
-	        	}	        	
+		            log.addPCB(pcb);	        		
+	        	}
 	        }
 	    }
 
