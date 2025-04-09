@@ -41,7 +41,7 @@ public class CPU extends Thread {
 	public void run() {	
 		System.out.println(PCB.getPID() + ": Running");
 		
-		PCB.setArrivalTime(System.nanoTime());
+		//PCB.setArrivalTime(System.nanoTime()); - would make running shorter if it was recalculated here
 
         // Execute the Python script using the path from PCB
         String scriptPath = PCB.getProcessPath();
