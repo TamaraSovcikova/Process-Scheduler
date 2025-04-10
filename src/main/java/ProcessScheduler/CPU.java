@@ -44,7 +44,6 @@ public class CPU extends Thread {
         // Execute the Python script using the path from PCB
         String scriptPath = PCB.getProcessPath();
         String output = executeScript(scriptPath);
-        
         PCB.setExecutionTime();
 
         long burstTime = PCB.getCPUBurstTimeStatic(); 
@@ -61,12 +60,12 @@ public class CPU extends Thread {
         
         if (PCB.getCPUBurstTime() == 0) {
             String logMessage = PCB.getPID() + ": Complete, Context Switches: " 
-                + PCB.getContextSwitches() + ", Output: " + output + ", Execution Time: " 
-                + PCB.getExecutionTime() + "ms";
+                + PCB.getContextSwitches() + ", Output: " + output;
             log.add(logMessage);
 
             // Display the process completion message, ONLY when it is fully completed
-            System.out.println(logMessage);
+            System.out.println(logMessage + ", Execution Time: " 
+                    + PCB.getExecutionTime() + "ms");
         }
 	}
 	
