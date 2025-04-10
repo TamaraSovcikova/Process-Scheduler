@@ -68,9 +68,9 @@ public class Scheduler {
 	//- If two processes have the same priority, use FCFS.
 	
 	public void priorityScheduling() {
-		synchronized(readyQueue) {
 			ProcessControlBlock highestPriorityProcess = null;
 		    
+			synchronized(readyQueue) {
 	            // Finds the highest-priority process in the queue
 	            for (ProcessControlBlock process : readyQueue) {
 	                if (highestPriorityProcess == null || 
@@ -81,19 +81,19 @@ public class Scheduler {
 	                    highestPriorityProcess = process;
 	                }
 	            }
-	            readyQueue.remove(highestPriorityProcess);
-	        
-	        // Ensure burst time is zero after execution to trigger completion message
-		    highestPriorityProcess.setCPUBurstTime(0);
-	        CPU cpu = new CPU(highestPriorityProcess, log);
-	        cpu.start();
-	        
-	        try {
-	            cpu.join();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
-		}
+	            readyQueue.remove(highestPriorityProcess);	        
+			}
+			
+			// Ensure burst time is zero after execution to trigger completion message
+			highestPriorityProcess.setCPUBurstTime(0);
+			CPU cpu = new CPU(highestPriorityProcess, log);
+			cpu.start();
+			
+			try {
+				cpu.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 	}
 	
 	//First-Come, First-Served (FCFS):
@@ -103,8 +103,10 @@ public class Scheduler {
 	 * First Come First Served algorithm.
 	 */
 	public void FCFS() {
+		ProcessControlBlock firstProcess = null;
 		 synchronized(readyQueue) {
-	        ProcessControlBlock firstProcess = readyQueue.poll();
+	        firstProcess = readyQueue.poll();
+		 }
 	        
 	        // Ensure burst time is zero after execution to trigger completion message
 	        firstProcess.setCPUBurstTime(0);
@@ -115,10 +117,7 @@ public class Scheduler {
 	            cpu.join();
 	        } catch (InterruptedException e) {
 	            e.printStackTrace();
-	        }
-	        
-	        
-		 }
+	        }	      
 	}
 
 	//Round Robin (RR):
@@ -129,8 +128,10 @@ public class Scheduler {
 	 * Round Robin algorithm.
 	 */
 	public void RR() {		
+		ProcessControlBlock currentP = null;
 		synchronized(readyQueue) {
-			ProcessControlBlock currentP = readyQueue.poll();
+			currentP = readyQueue.poll();
+		}
 			long remainingBurstTime = currentP.getCPUBurstTime();
 			long timeToExecute = Math.min(remainingBurstTime, timeQuantum);  
 			
@@ -149,9 +150,11 @@ public class Scheduler {
 			if (currentP.getCPUBurstTime() > 0) {
 				System.out.println(currentP.getPID() + ": Quantum exceeded");
 				currentP.addContextSwitch();
-			    readyQueue.offer(currentP);			    
+				synchronized(readyQueue) {
+					readyQueue.offer(currentP);		
+				}
 			}	
-		}
+		
 	}
 }
 
